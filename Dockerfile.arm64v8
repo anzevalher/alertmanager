@@ -5,7 +5,7 @@ COPY --from=golang:1.12 /usr/local/go /usr/local/go
 RUN ln -s /usr/local/go/bin/go /usr/local/bin/go \
  && apt-get update && apt-get -y install git \
  && mkdir -p ~/go/src/github.com/prometheus/alertmanager \
- && git clone -b v0.15.3 https://github.com/prometheus/alertmanager.git ~/go/src/github.com/prometheus/alertmanager \
+ && git clone -b v0.16.0-alpha.0 https://github.com/prometheus/alertmanager.git ~/go/src/github.com/prometheus/alertmanager \
  && cd ~/go/src/github.com/prometheus/alertmanager/cmd/alertmanager/ \
  && GOOS=linux GOARCH=arm64 go build \
  && mkdir -p /etc/alertmanager/template \
