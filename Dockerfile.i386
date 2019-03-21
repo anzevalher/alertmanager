@@ -1,18 +1,18 @@
-FROM debian:stretch-slim AS alertmanager-builder
+FROM debian:9.8-slim AS alertmanager-builder
 
-COPY --from=golang:stretch /usr/local/go /usr/local/go
+COPY --from=golang:1.12 /usr/local/go /usr/local/go
 
 RUN ln -s /usr/local/go/bin/go /usr/local/bin/go \
  && apt-get update && apt-get -y install git \
  && mkdir -p ~/go/src/github.com/prometheus/alertmanager \
- && git clone -b master https://github.com/prometheus/alertmanager.git ~/go/src/github.com/prometheus/alertmanager \
+ && git clone -b v0.10.0 https://github.com/prometheus/alertmanager.git ~/go/src/github.com/prometheus/alertmanager \
  && cd ~/go/src/github.com/prometheus/alertmanager/cmd/alertmanager/ \
  && GOOS=linux GOARCH=386 go build \
  && mkdir -p /etc/alertmanager/template \
  && mkdir /data \
  && cp ~/go/src/github.com/prometheus/alertmanager/doc/examples/simple.yml /etc/alertmanager/config.yml
 
-FROM i386/busybox:glibc
+FROM i386/busybox:1.30-glibc
 
 COPY --from=alertmanager-builder /root/go/src/github.com/prometheus/alertmanager/cmd/alertmanager/alertmanager /usr/sbin/alertmanager
 COPY --from=alertmanager-builder --chown=nobody:nogroup /etc/alertmanager/ /etc/alertmanager/
